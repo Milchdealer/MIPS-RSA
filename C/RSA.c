@@ -2,7 +2,6 @@
 #include "RSA.h"
 
 #include <string.h> // memset
-#include <math.h> // abs
 
 /**
  * Finds the closest number in the array to the given number.
