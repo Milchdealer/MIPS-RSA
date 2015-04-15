@@ -36,3 +36,5 @@
 *.sln
 *.suo
 *.vcxproj*
+*.opensdf
+Debug/

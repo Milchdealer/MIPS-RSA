@@ -3,7 +3,6 @@
 
 #include "RSA.h"
 
-
 /**
  * Main routine containing the following functionality
  *	- Support the user in generating large prime numbers p and q
