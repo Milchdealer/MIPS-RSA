@@ -60,3 +60,24 @@ unsigned int getprime(unsigned int n) {
 	else // 0 to 2
 		return 2;
 }
+
+/**
+ * Calculate the totient phi from two prime numbers.
+ * @param p First prime number
+ * @param q Second prime number
+ * @return Totient contains phi and modN
+ */
+Totient totient(unsigned int p, unsigned int q) {
+    Totient ret;
+
+    ret.phi = (p - 1) * (q - 1);
+    ret.modN = p * q;
+
+    if (ret.phi < p || ret.phi < q ||
+        ret.modN < p || ret.modN < q) { // out of bound
+        ret.phi = 0;
+        ret.modN = 0;
+    }
+
+    return ret;
+}
