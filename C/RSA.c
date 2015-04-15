@@ -1,24 +1,30 @@
 
 #include "RSA.h"
 
-#include <stdio.h>
-#include <math.h>
+#include <string.h> // memset
+#include <math.h> // abs
 
 /**
- * Finds the closest number in the array to the given number (ascending search order).
+ * Finds the closest number in the array to the given number.
+ * In case n is exactly in the middle of two prime numbers, take the smaller one.
  * @param values array to search through
  * @param n number as reference
  * @return closest number
  */
-unsigned int findClosest(unsigned int values[], unsigned int n) {
-	int dist = values[0] - n;
-	unsigned int i;
+unsigned int findClosest(signed char values[], unsigned int n) {
+    unsigned int i[2];
 
-	for (i = 1; i < MAX_PRIMES; ++i)
-		if (values[i] - n < dist)
-			break;
+    i[0] = i[1] = n;
+    while (!values[i[0]] && !values[i[1]]) {
+        if (i[0] > 2)
+            i[0]--;
+        if (i[1] < MAX_NUMBERS)
+            i[1]++;
+    }
 
-	return i;
+    if (values[i[0]]) // Always try the smaller one first
+	    return i[0];
+    return i[1];
 }
 
 /**
@@ -29,26 +35,27 @@ unsigned int findClosest(unsigned int values[], unsigned int n) {
 unsigned int getprime(unsigned int n) {
 	if (n > MAX_NUMBERS)
 		return 0; // error
+
 	if (n >= 5) {
-		unsigned int i, j, numbers[MAX_NUMBERS];
-		unsigned int primes[MAX_PRIMES];
+        unsigned int i, j;
+        signed char primes[MAX_NUMBERS];
 		
-		for (i = 0; i < MAX_NUMBERS; i++)
-			numbers[i] = i + 5; // Fill with some natural numbers > 5 (since we start at 5)
+        memset(primes, 1, sizeof(primes)); // consider all as primes
 		
 		// Sieve non primes
-		for (i = 0; i < MAX_NUMBERS; i++)
-			if (numbers[i] != -1)
-				for (j = 2 * numbers[i] - 5; j < MAX_NUMBERS; j += numbers[i])
-					numbers[j] = -1;
-
-		// Copy primes to their own array
-		for (i = 0, j = 0; i < MAX_NUMBERS && j < MAX_PRIMES; i++)
-			if (numbers[i] != -1)
-				primes[j++] = numbers[i];
+        for (i = 2; i < MAX_NUMBERS; i++)
+            if (primes[i]) // currently considered prime
+                for (j = i; j*i < MAX_NUMBERS; j++)
+                    primes[j * i] = 0; // cross out primes
 		
+        // Do segmented sieve here, if out of memory, because:
+        // http://stackoverflow.com/questions/26201489/how-does-segmentation-improve-the-running-time-of-sieve-of-eratosthenes
+        // refs:
+        // http://stackoverflow.com/questions/6461445/find-primes-in-a-certain-range-efficiently
+        // http://primesieve.org/segmented_sieve.html
+
 		// Find closest number to n
-		return primes[findClosest(primes, n)];
+		return findClosest(primes, n);
 	} else if (n > 2) // 3 or 4
 		return 3;
 	else // 0 to 2
