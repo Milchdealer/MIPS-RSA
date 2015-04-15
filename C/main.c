@@ -15,8 +15,8 @@
  */
 int main(int argc, char **argv) {
     if (argc > 1)
-        printf("%d\n", getprime(atoi(argv[1])));
+        printf("%d\n", GCD(atoi(argv[1]), atoi(argv[2])));
     else
-	    printf("%d\n", getprime(5));
+	    printf("%d\n", GCD(100, 50));
 	return 0;
 }

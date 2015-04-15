@@ -81,3 +81,31 @@ Totient totient(unsigned int p, unsigned int q) {
 
     return ret;
 }
+
+/**
+ * Finds the greates common divisor.
+ * @param a left hand number
+ * @param b right hand number
+ * @return GCD
+ */
+unsigned int GCD(unsigned int a, unsigned int b) {
+    if (a == 0)
+        return b;
+    while (b != 0) {
+        if (a > b)
+            a -= b;
+        else
+            b -= a;
+    }
+    return a;
+}
+/**
+ * Calculate the exponent d representing the multiplicative inverse of e % phi).
+ * @param phi totient phi
+ * @param e exponent e
+ * @return exponent d
+ */
+unsigned int inverse(Totient phi, unsigned int e) {
+    unsigned int d = GCD(phi.modN, e);
+    return d;
+}
