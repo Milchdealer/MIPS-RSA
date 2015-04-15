@@ -14,6 +14,6 @@
  *  - Requests the user for the next message M until an empty message is entered.
  */
 int main(int argc, char **argv) {
-	getprime(10);
+	printf("%d\n", getprime(5000));
 	return 0;
 }
