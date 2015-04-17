@@ -6,10 +6,7 @@
 
 // static function headers
 unsigned int modmult(unsigned int a, unsigned int b, unsigned int n);
-unsigned int findClosest(unsigned int n);
-unsigned int GCD(unsigned int a, unsigned int b);
-unsigned int inverse(Totient phi, unsigned int e);
-unsigned int binaryExp(unsigned int a, unsigned int b, unsigned int n);
+unsigned int findClosest(unsigned int n); 
 unsigned int powmod(unsigned int a, unsigned int b, Totient phi);
 
 // static variables
@@ -113,26 +110,6 @@ unsigned int modInverse(unsigned a, Totient phi) {
 	return powmod(a, phi.phi - 2, phi);
 }
 
-// Helper Functions\\ 
-
-/**
- * Finds the greates common divisor.
- * @param a left hand number
- * @param b right hand number
- * @return GCD
- */
-unsigned int GCD(unsigned int a, unsigned int b) {
-    if (a == 0)
-        return b;
-    while (b != 0) {
-        if (a > b)
-            a -= b;
-        else
-            b -= a;
-    }
-    return a;
-}
-
 /**
  * Gets the public exponent based on the totient.
  * @param phi Totient to base the public exponent on
@@ -150,6 +127,8 @@ unsigned int publicExp(Totient phi) {
 	// Error: No public exponent found
 	return getprime(rand() % 1024 + 2);
 }
+
+// Helper Functions\\ 
 
 /** This function calculates (a^b)%phi.
  * @param a base
@@ -216,38 +195,4 @@ unsigned int findClosest(unsigned int n) {
     if (primes[i[0]]) // Always try the smaller one first
 	    return i[0];
     return i[1];
-}
-
-/**
- * Performs the modular multiplication.
- * @param a left factor
- * @param b right factor
- * @param n modulus
- * @return result
- */
-unsigned int modmult(unsigned int a, unsigned int b, unsigned int n) {
-	return (a * b) % n;
-}
-
-/**
- * Get the binary exponent and use modulo on all multiplcations to avoid overflow.
- * @param a base
- * @param b exponent
- * @param n modulo
- * @return result of "a^b%n"
- */
-unsigned int binaryExp(unsigned int a, unsigned int b, unsigned int n) {
-	unsigned int i, res = 1;
-
-	for (i = 0; i < sizeof(unsigned int) * 8; i++) {
-		int byte = 1 << i;
-		res *= res;
-		res %= n; 
-		if (b & byte) {
-			res *= a;
-			res %= n;
-		}
-	}
-
-	return res;
 }

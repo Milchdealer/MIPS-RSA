@@ -62,6 +62,7 @@ int main(int argc, char **argv) {
 	for (i = 0; i < 6; i++) 
 			printf("%d", M[i]);
 	printf("\n");
+	printf("%s", _decrypted);
 
 	free(val);
 	free(C);
