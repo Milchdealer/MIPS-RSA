@@ -3,28 +3,11 @@
 
 #include <string.h> // memset
 
-/**
- * Finds the closest number in the array to the given number.
- * In case n is exactly in the middle of two prime numbers, take the smaller one.
- * @param values array to search through
- * @param n number as reference
- * @return closest number
- */
-unsigned int findClosest(signed char values[], unsigned int n) {
-    unsigned int i[2];
-
-    i[0] = i[1] = n;
-    while (!values[i[0]] && !values[i[1]]) {
-        if (i[0] > 2)
-            i[0]--;
-        if (i[1] < MAX_NUMBERS)
-            i[1]++;
-    }
-
-    if (values[i[0]]) // Always try the smaller one first
-	    return i[0];
-    return i[1];
-}
+// static function headers
+unsigned int modmult(unsigned int a, unsigned int b, unsigned int n);
+unsigned int findClosest(signed char values[], unsigned int n);
+unsigned int GCD(unsigned int a, unsigned int b);
+unsigned int inverse(Totient phi, unsigned int e);
 
 /**
  *  Finding a prime number near n.
@@ -73,7 +56,7 @@ Totient totient(unsigned int p, unsigned int q) {
     ret.phi = (p - 1) * (q - 1);
     ret.modN = p * q;
 
-    if (ret.phi < p || ret.phi < q ||
+    if (//ret.phi < p || ret.phi < q || // Since N is bigger, if N is in bound, so is phi
         ret.modN < p || ret.modN < q) { // out of bound
         ret.phi = 0;
         ret.modN = 0;
@@ -81,6 +64,32 @@ Totient totient(unsigned int p, unsigned int q) {
 
     return ret;
 }
+
+/**
+ * Encrypts message M with length num into ciphertext C.
+ * @param M message to encrypt
+ * @param C pointer where to save the encrypted message (space will be assumed by the routine)
+ * @param num length of M
+ * @param e exponent
+ * @param n modulus
+ */
+void encrypt(char const * const M, char * const C, size_t num, unsigned int e, unsigned int n) {
+	
+}
+
+/**
+ * Decrypts ciphertext C with length num into message M.
+ * @param C ciphertext to decrypt
+ * @param M message where to save the encrypted message (space will be assumed by the routine)
+ * @param num length of C
+ * @param d exponent inverse
+ * @param n modulus
+ */
+void decrypt(char const * const C, char * const M, size_t num, unsigned int d, unsigned int n) {
+
+}
+
+// Helper Functions\\
 
 /**
  * Finds the greates common divisor.
@@ -99,6 +108,7 @@ unsigned int GCD(unsigned int a, unsigned int b) {
     }
     return a;
 }
+
 /**
  * Calculate the exponent d representing the multiplicative inverse of e % phi).
  * @param phi totient phi
@@ -106,6 +116,44 @@ unsigned int GCD(unsigned int a, unsigned int b) {
  * @return exponent d
  */
 unsigned int inverse(Totient phi, unsigned int e) {
-    unsigned int d = GCD(phi.modN, e);
-    return d;
+    unsigned int d;
+
+	d = 1 / e;
+	d = d % phi.phi;
+
+	return d;
+}
+
+/**
+ * Finds the closest number in the array to the given number.
+ * In case n is exactly in the middle of two prime numbers, take the smaller one.
+ * @param values array to search through
+ * @param n number as reference
+ * @return closest number
+ */
+unsigned int findClosest(signed char values[], unsigned int n) {
+    unsigned int i[2];
+
+    i[0] = i[1] = n;
+    while (!values[i[0]] && !values[i[1]]) {
+        if (i[0] > 2)
+            i[0]--;
+        if (i[1] < MAX_NUMBERS)
+            i[1]++;
+    }
+
+    if (values[i[0]]) // Always try the smaller one first
+	    return i[0];
+    return i[1];
+}
+
+/**
+ * Performs the modular multiplication.
+ * @param a left factor
+ * @param b right factor
+ * @param n modulus
+ * @return result
+ */
+unsigned int modmult(unsigned int a, unsigned int b, unsigned int n) {
+	return (a * b) % n;
 }

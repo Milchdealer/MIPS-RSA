@@ -15,6 +15,8 @@ typedef struct {
 } Totient;
 
 // Function Headers
+void encrypt(char const * const M, char * const C, size_t num, unsigned int e, unsigned int n);
+void decrypt(char const * const C, char * const M, size_t num, unsigned int d, unsigned int n);
 unsigned int getprime(unsigned int n);
 Totient totient(unsigned int p, unsigned int q);
 
