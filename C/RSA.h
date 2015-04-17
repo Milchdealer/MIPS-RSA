@@ -2,11 +2,15 @@
 #ifndef __RSA_H_INCLUDED__
 #define __RSA_H_INCLUDED__
 
+// Globally used libraries
+#include <stdio.h>
+#include <stdlib.h>
+
 // Makros
 #define GETLIMIT(n) (n * 13 / 10) // +30%
 
 // Constants
-#define MAX_NUMBERS 150000  // Maximum size of integer array
+#define MAX_NUMBERS 650000  // Maximum size of integer array
 
 // Structures
 typedef struct {
@@ -15,9 +19,11 @@ typedef struct {
 } Totient;
 
 // Function Headers
-void encrypt(char const * const M, char * const C, size_t num, unsigned int e, unsigned int n);
-void decrypt(char const * const C, char * const M, size_t num, unsigned int d, unsigned int n);
+unsigned int *encrypt(unsigned int const * const, size_t, unsigned int, Totient);
+unsigned int *decrypt(unsigned int const * const, size_t, unsigned int, Totient);
 unsigned int getprime(unsigned int n);
 Totient totient(unsigned int p, unsigned int q);
+unsigned int publicExp(Totient phi);
+unsigned int inverse(Totient phi, unsigned int e);
 
 #endif // __RSA_H_INCLUDED__

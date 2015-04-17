@@ -1,13 +1,19 @@
 
 #include "RSA.h"
 
+#include <math.h> // floor, sqrt
 #include <string.h> // memset
 
 // static function headers
 unsigned int modmult(unsigned int a, unsigned int b, unsigned int n);
-unsigned int findClosest(signed char values[], unsigned int n);
+unsigned int findClosest(unsigned int n);
 unsigned int GCD(unsigned int a, unsigned int b);
 unsigned int inverse(Totient phi, unsigned int e);
+unsigned int binaryExp(unsigned int a, unsigned int b, unsigned int n);
+unsigned int powmod(unsigned int a, unsigned int b, Totient phi);
+
+// static variables
+static signed char primes[MAX_NUMBERS];
 
 /**
  *  Finding a prime number near n.
@@ -20,15 +26,14 @@ unsigned int getprime(unsigned int n) {
 
 	if (n >= 5) {
         unsigned int i, j;
-        signed char primes[MAX_NUMBERS];
 		
         memset(primes, 1, sizeof(primes)); // consider all as primes
 		
 		// Sieve non primes
         for (i = 2; i < MAX_NUMBERS; i++)
             if (primes[i]) // currently considered prime
-                for (j = i; j*i < MAX_NUMBERS; j++)
-                    primes[j * i] = 0; // cross out primes
+                for (j = i; j*i < MAX_NUMBERS; j++) // Takes multiples of the current prime
+                    primes[j * i] ^= primes[j * i]; // cross out non-primes
 		
         // Do segmented sieve here, if out of memory, because:
         // http://stackoverflow.com/questions/26201489/how-does-segmentation-improve-the-running-time-of-sieve-of-eratosthenes
@@ -37,7 +42,7 @@ unsigned int getprime(unsigned int n) {
         // http://primesieve.org/segmented_sieve.html
 
 		// Find closest number to n
-		return findClosest(primes, n);
+		return findClosest(n);
 	} else if (n > 2) // 3 or 4
 		return 3;
 	else // 0 to 2
@@ -68,28 +73,47 @@ Totient totient(unsigned int p, unsigned int q) {
 /**
  * Encrypts message M with length num into ciphertext C.
  * @param M message to encrypt
- * @param C pointer where to save the encrypted message (space will be assumed by the routine)
  * @param num length of M
  * @param e exponent
  * @param n modulus
+ * @return pointer to the array containing the 
  */
-void encrypt(char const * const M, char * const C, size_t num, unsigned int e, unsigned int n) {
-	
+unsigned int *encrypt(unsigned int const * const M, size_t num, unsigned int e, Totient phi) {
+	unsigned int i;
+	unsigned int *cipher;
+
+	cipher = (unsigned *) malloc(sizeof(unsigned int) * num);
+
+	for (i = 0; i < num; i++)
+		cipher[i] = powmod(M[i], e, phi);
+
+	return cipher;
 }
 
 /**
  * Decrypts ciphertext C with length num into message M.
  * @param C ciphertext to decrypt
- * @param M message where to save the encrypted message (space will be assumed by the routine)
  * @param num length of C
  * @param d exponent inverse
  * @param n modulus
  */
-void decrypt(char const * const C, char * const M, size_t num, unsigned int d, unsigned int n) {
+unsigned int *decrypt(unsigned int const * const C, size_t num, unsigned int d, Totient phi) {
+	unsigned int i;
+	unsigned int *message;
 
+	message = (unsigned int *) malloc(sizeof(unsigned int) * num);
+
+	for (i = 0; i < num; i++)
+		message[i] = powmod(C[i], d, phi);
+	
+	return message;
 }
 
-// Helper Functions\\
+unsigned int modInverse(unsigned a, Totient phi) {
+	return powmod(a, phi.phi - 2, phi);
+}
+
+// Helper Functions\\ 
 
 /**
  * Finds the greates common divisor.
@@ -110,18 +134,65 @@ unsigned int GCD(unsigned int a, unsigned int b) {
 }
 
 /**
+ * Gets the public exponent based on the totient.
+ * @param phi Totient to base the public exponent on
+ * @return public exponent
+ */
+unsigned int publicExp(Totient phi) {
+	unsigned int i, k = 0;
+
+	for (i = 2; i < phi.phi; i++) {
+		if (phi.phi % i == 0)
+			continue;
+		if (primes[i])
+			return i;
+	}
+	// Error: No public exponent found
+	return getprime(rand() % 1024 + 2);
+}
+
+/** This function calculates (a^b)%phi.
+ * @param a base
+ * @param b exponent
+ * @param phi modulus
+ * @return (a^b)%phi
+ */
+unsigned int powmod(unsigned int a, unsigned int b, Totient phi) {
+	unsigned int x = 1, y = a;
+    while(b > 0) {
+        if(b % 2) {
+            x= x * y;
+            if(x > phi.phi)
+				x %= phi.phi;
+        }
+        y = y * y;
+        if (y)
+			y %= phi.phi;
+        b /= 2;
+    }
+    return x;
+}
+ 
+/**
  * Calculate the exponent d representing the multiplicative inverse of e % phi).
  * @param phi totient phi
  * @param e exponent e
  * @return exponent d
  */
 unsigned int inverse(Totient phi, unsigned int e) {
-    unsigned int d;
+    int b0 = phi.phi, t, q;
+	int x0 = 0, x1 = 1;
 
-	d = 1 / e;
-	d = d % phi.phi;
-
-	return d;
+	if (phi.phi == 1)
+		return 1;
+	while (e > 1) {
+		q = e / phi.phi;
+		t = phi.phi, phi.phi = e % phi.phi, e = t;
+		t = x0, x0 = x1 - q * x0, x1 = t;
+	}
+	if (x1 < 0)
+		x1 += b0;
+	return x1;
 }
 
 /**
@@ -131,18 +202,18 @@ unsigned int inverse(Totient phi, unsigned int e) {
  * @param n number as reference
  * @return closest number
  */
-unsigned int findClosest(signed char values[], unsigned int n) {
+unsigned int findClosest(unsigned int n) {
     unsigned int i[2];
 
     i[0] = i[1] = n;
-    while (!values[i[0]] && !values[i[1]]) {
+    while (!primes[i[0]] && !primes[i[1]]) {
         if (i[0] > 2)
             i[0]--;
         if (i[1] < MAX_NUMBERS)
             i[1]++;
     }
 
-    if (values[i[0]]) // Always try the smaller one first
+    if (primes[i[0]]) // Always try the smaller one first
 	    return i[0];
     return i[1];
 }
@@ -156,4 +227,27 @@ unsigned int findClosest(signed char values[], unsigned int n) {
  */
 unsigned int modmult(unsigned int a, unsigned int b, unsigned int n) {
 	return (a * b) % n;
+}
+
+/**
+ * Get the binary exponent and use modulo on all multiplcations to avoid overflow.
+ * @param a base
+ * @param b exponent
+ * @param n modulo
+ * @return result of "a^b%n"
+ */
+unsigned int binaryExp(unsigned int a, unsigned int b, unsigned int n) {
+	unsigned int i, res = 1;
+
+	for (i = 0; i < sizeof(unsigned int) * 8; i++) {
+		int byte = 1 << i;
+		res *= res;
+		res %= n; 
+		if (b & byte) {
+			res *= a;
+			res %= n;
+		}
+	}
+
+	return res;
 }
