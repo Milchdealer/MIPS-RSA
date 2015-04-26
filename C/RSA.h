@@ -3,8 +3,8 @@
 #define __RSA_H_INCLUDED__
 
 // Globally used libraries
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> // I/O
+#include <stdlib.h> // alloc
 
 // Makros
 #define GETLIMIT(n) (n * 13 / 10) // +30%
@@ -16,6 +16,7 @@
 typedef struct {
     unsigned int phi;
     unsigned int modN;
+    unsigned int p, q;
 } Totient;
 
 // Function Headers
