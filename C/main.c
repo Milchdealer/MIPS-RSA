@@ -1,6 +1,8 @@
 
 #include "RSA.h"
 
+#include <string.h> // memset
+
 unsigned int *text2int(char const * const text, size_t size) {
 	unsigned int i;
 	unsigned int *res;
@@ -39,33 +41,33 @@ int main(int argc, char **argv) {
 	unsigned int d, e, p, q;
 	unsigned int *val;
 	char *_decrypted;
-	char text[6] = "Hello";
+	char text[6] = "hello";
 
 	val = text2int(text, 6);
-	printf("%s\n", text);
+	printf("Message: %s\nAs numbers: ", text);
 	for (i = 0; i < 6; i++)
 		printf("%d", val[i]);
-	printf("\n");
 
-	p = 11;
-	q = 23;
+	p = getprime(50);
+	q = getprime(60);
 	phi = totient(p, q);
-	e = 13;
+    e = publicExp(phi);
 	d = inverse(phi, e);
+    printf("\np=%d\nq=%d\nphi=%d\nmodN=%d\ne=%d\nd=%d\nEncrypted as numbers: ", p, q, phi.phi, phi.modN, e, d);
+
 	C = encrypt(val, 6, e, phi);
 	for (i = 0; i < 6; i++)
 		printf("%d", C[i]);
-	printf("\n");
-
+	printf("\nDecrypted as numbers: ");
 	M = decrypt(C, 6, d, phi);
 	_decrypted = int2text(M, 6);
 	for (i = 0; i < 6; i++) 
 			printf("%d", M[i]);
-	printf("\n");
-	printf("%s", _decrypted);
+	printf("\nDecrypted message: %s\nPress enter to exit...", _decrypted);
 
 	free(val);
 	free(C);
 	free(M);
+    fgetc(stdin);
 	return 0;
 }

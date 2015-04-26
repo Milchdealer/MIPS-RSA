@@ -7,7 +7,8 @@
 // static function headers
 unsigned int modmult(unsigned int a, unsigned int b, unsigned int n);
 unsigned int findClosest(unsigned int n); 
-unsigned int powmod(unsigned int a, unsigned int b, Totient phi);
+unsigned int powmod(unsigned int a, unsigned int b, unsigned int mod);
+unsigned int GCD(unsigned int a, unsigned int b);
 
 // static variables
 static signed char primes[MAX_NUMBERS];
@@ -63,6 +64,8 @@ Totient totient(unsigned int p, unsigned int q) {
         ret.phi = 0;
         ret.modN = 0;
     }
+    ret.p = p;
+    ret.q = q;
 
     return ret;
 }
@@ -82,7 +85,7 @@ unsigned int *encrypt(unsigned int const * const M, size_t num, unsigned int e, 
 	cipher = (unsigned *) malloc(sizeof(unsigned int) * num);
 
 	for (i = 0; i < num; i++)
-		cipher[i] = powmod(M[i], e, phi);
+		cipher[i] = powmod(M[i], e, phi.modN);
 
 	return cipher;
 }
@@ -101,13 +104,13 @@ unsigned int *decrypt(unsigned int const * const C, size_t num, unsigned int d, 
 	message = (unsigned int *) malloc(sizeof(unsigned int) * num);
 
 	for (i = 0; i < num; i++)
-		message[i] = powmod(C[i], d, phi);
+		message[i] = powmod(C[i], d, phi.modN);
 	
 	return message;
 }
 
 unsigned int modInverse(unsigned a, Totient phi) {
-	return powmod(a, phi.phi - 2, phi);
+	return powmod(a, phi.phi - 2, phi.phi);
 }
 
 /**
@@ -116,10 +119,10 @@ unsigned int modInverse(unsigned a, Totient phi) {
  * @return public exponent
  */
 unsigned int publicExp(Totient phi) {
-	unsigned int i, k = 0;
+	unsigned int i;
 
 	for (i = 2; i < phi.phi; i++) {
-		if (phi.phi % i == 0)
+		if (GCD(i, phi.phi) != 1)
 			continue;
 		if (primes[i])
 			return i;
@@ -136,20 +139,38 @@ unsigned int publicExp(Totient phi) {
  * @param phi modulus
  * @return (a^b)%phi
  */
-unsigned int powmod(unsigned int a, unsigned int b, Totient phi) {
+unsigned int powmod(unsigned int a, unsigned int b, unsigned int mod) {
 	unsigned int x = 1, y = a;
     while(b > 0) {
         if(b % 2) {
             x= x * y;
-            if(x > phi.phi)
-				x %= phi.phi;
+            if(x > mod)
+				x %= mod;
         }
         y = y * y;
         if (y)
-			y %= phi.phi;
+            y %= mod;
         b /= 2;
     }
     return x;
+}
+
+/**
+* Finds the greates common divisor.
+* @param a left hand number
+* @param b right hand number
+* @return GCD
+*/
+unsigned int GCD(unsigned int a, unsigned int b) {
+    if (a == 0)
+        return b;
+    while (b != 0) {
+        if (a > b)
+            a -= b;
+        else
+            b -= a;
+    }
+    return a;
 }
  
 /**
