@@ -14,7 +14,7 @@ import generate_mips
 
 words = ['a', 'ab', 'pom', 'sunu', '..', 'rabel', 'kaltxi', 'klavier', 'bananenbrot', 'superkalifragelistike']
 
-class TestRSA_C():#unittest.TestCase):
+class TestRSA_C(unittest.TestCase):
 
 	def setUp(self):
 		os.chdir('../C')
@@ -64,6 +64,18 @@ class TestRSA_MIPS(unittest.TestCase):
 	def test_strlen(self):
 		for w in words:
 			self.assertEquals( self.call_mips('strlen.s', '%s\n' % w), str(len(w) + 1) )
+
+	def test_gcd(self):
+		generate_mips.link_file('gcd.s')
+
+		for val, expected in [ ([10,5], 5), ([12,18],6), ([144,160], 16), ([16,175], 1), ([1071,1029], 21) ]:
+			self.assertEquals( self.call_mips('gen/gcd.s', '%d\n%d\n' % tuple(val)), str(expected) )
+
+	def test_powmod(self):
+		generate_mips.link_file('powmod.s')
+
+		for val, expected in [ ([5,3,13],8), ([4,13,497],445), ([2,50,13],4), ([2,40,13],3) ]:
+			self.assertEquals( self.call_mips('gen/powmod.s', '%d\n%d\n%d\n' % tuple(val)), str(expected) )
 
 if __name__ == '__main__':
 	unittest.main()

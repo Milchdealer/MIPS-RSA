@@ -142,14 +142,12 @@ unsigned int publicExp(Totient phi) {
 unsigned int powmod(unsigned int a, unsigned int b, unsigned int mod) {
 	unsigned int x = 1, y = a;
     while(b > 0) {
-        if(b % 2) {
-            x= x * y;
-            if(x > mod)
-				x %= mod;
+        if(b % 2) {  // (b & 1)
+            x *= y;
+			x %= mod;
         }
         y = y * y;
-        if (y)
-            y %= mod;
+        y %= mod;
         b /= 2;
     }
     return x;
