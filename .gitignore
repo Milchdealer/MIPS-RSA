@@ -28,7 +28,14 @@
 *.x86_64
 *.hex
 
+# Compiled Python
+*.pyc
+
 # Debug files
 *.dSYM/
 
+# Binary folder
 bin/
+
+# Generated files
+mips/gen/

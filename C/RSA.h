@@ -10,7 +10,7 @@
 #define GETLIMIT(n) (n * 13 / 10) // +30%
 
 // Constants
-#define MAX_NUMBERS 650000  // Maximum size of integer array
+#define MAX_NUMBERS 1200  // Maximum size of integer array
 
 // Structures
 typedef struct {
