@@ -77,6 +77,12 @@ class TestRSA_MIPS(unittest.TestCase):
 		for val, expected in [ ([5,3,13],8), ([4,13,497],445), ([2,50,13],4), ([2,40,13],3) ]:
 			self.assertEquals( self.call_mips('gen/powmod.s', '%d\n%d\n%d\n' % tuple(val)), str(expected) )
 
+	def test_inverse(self):
+		generate_mips.link_file('inverse.s')
+
+		for val, expected in [ ([20,7],3), ([32,25],9), ([12,7],7), ([504,421],85), ([72,7],31) ]:
+			self.assertEquals( self.call_mips('gen/inverse.s', '%d\n%d\n' % tuple(val)), str(expected) )
+
 if __name__ == '__main__':
 	unittest.main()
 
