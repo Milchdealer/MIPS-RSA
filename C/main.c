@@ -13,11 +13,12 @@ unsigned int *text2int(char const * const text, size_t size) {
 
 	return res;
 }
+
 char *int2text(unsigned int const * const vals, size_t size) {
 	unsigned int i;
 	char *res;
 
-	res = (char *) malloc(sizeof(char) * size * sizeof(unsigned int));
+	res = (char *) malloc(sizeof(char) * size);
 	for (i = 0; i < size; i++)
 		res[i] = (char) vals[i]; // memory loss
 
@@ -41,11 +42,15 @@ int main(int argc, char **argv) {
 	unsigned int d, e, p, q;
 	unsigned int *val;
 	char *_decrypted;
-	char text[6] = "hello";
+	char *text = "hello";
+	if (argc > 1)
+		text = argv[1];
 
-	val = text2int(text, 6);
+	unsigned int text_length = strlen(text) + 1;
+
+	val = text2int(text, text_length);
 	printf("Message: %s\nAs numbers: ", text);
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < text_length; i++)
 		printf("%d", val[i]);
 
 	p = getprime(50);
@@ -53,21 +58,20 @@ int main(int argc, char **argv) {
 	phi = totient(p, q);
     e = publicExp(phi);
 	d = inverse(phi, e);
-    printf("\np=%d\nq=%d\nphi=%d\nmodN=%d\ne=%d\nd=%d\nEncrypted as numbers: ", p, q, phi.phi, phi.modN, e, d);
+    printf("\np=%d\nq=%d\nphi=%d\nmodN=%d\ne=%d\nd=%d\nlen=%d\nEncrypted as numbers: ", p, q, phi.phi, phi.modN, e, d, text_length);
 
-	C = encrypt(val, 6, e, phi);
-	for (i = 0; i < 6; i++)
+	C = encrypt(val, text_length, e, phi);
+	for (i = 0; i < text_length; i++)
 		printf("%d", C[i]);
 	printf("\nDecrypted as numbers: ");
-	M = decrypt(C, 6, d, phi);
-	_decrypted = int2text(M, 6);
-	for (i = 0; i < 6; i++) 
+	M = decrypt(C, text_length, d, phi);
+	_decrypted = int2text(M, text_length);
+	for (i = 0; i < text_length; i++) 
 			printf("%d", M[i]);
-	printf("\nDecrypted message: %s\nPress enter to exit...", _decrypted);
+	printf("\nDecrypted message: %s", _decrypted);
 
 	free(val);
 	free(C);
 	free(M);
-    fgetc(stdin);
 	return 0;
 }

@@ -109,10 +109,6 @@ unsigned int *decrypt(unsigned int const * const C, size_t num, unsigned int d, 
 	return message;
 }
 
-unsigned int modInverse(unsigned a, Totient phi) {
-	return powmod(a, phi.phi - 2, phi.phi);
-}
-
 /**
  * Gets the public exponent based on the totient.
  * @param phi Totient to base the public exponent on
@@ -142,14 +138,12 @@ unsigned int publicExp(Totient phi) {
 unsigned int powmod(unsigned int a, unsigned int b, unsigned int mod) {
 	unsigned int x = 1, y = a;
     while(b > 0) {
-        if(b % 2) {
-            x= x * y;
-            if(x > mod)
-				x %= mod;
+        if(b % 2) {  // (b & 1)
+            x *= y;
+			x %= mod;
         }
         y = y * y;
-        if (y)
-            y %= mod;
+        y %= mod;
         b /= 2;
     }
     return x;
