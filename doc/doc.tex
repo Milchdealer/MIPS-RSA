@@ -22,6 +22,52 @@ for (i = 2; i < MAX_NUMBERS; i++)
 		for (j = i; j * i < MAX_NUMBERS; j++)
 			primes[j * i] ^= primes[j * i];
 \end{lstlisting}
-The first line allocates the space for up to MAX\_NUMBERS bytes. MAX\_NUMBERS is $1500$ in this case. The second line sets the value of all the adresses reserved to $1$. The first loops goes over every number from $2$ to MAX\_NUMBERS. 0 and 1 are skipped since they are both not considered prime and not plausible for the algorithm because it strokes out multiples of previously processed numbers from the array marking them as non-primes as they are multiples. Next up is making sure to only take multiples of numbers currently considered prime to optimize. The inner loop calculates multiples of the current number and crosses them out from the array via an exclusive-OR operation.
+The first line allocates the space for up to MAX\_NUMBERS bytes. MAX\_NUMBERS is $1500$ in this case. The second line sets the value of all the adresses reserved to $1$. The first loops goes over every number from $2$ to MAX\_NUMBERS. 0 and 1 are skipped since they are both not considered prime and not plausible for the algorithm because it strokes out multiples of previously processed numbers from the array marking them as non-primes as they are multiples. Next up is making sure to only take multiples of numbers currently considered prime to optimize. The inner loop calculates multiples of the current number and crosses them out from the array via an exclusive-OR operation. Eventually we are left with an array of zeroes and ones marking non-primes and primes, respectively.
+\subsubsection{Totient}
+The calculation of the totient is exactly the formular from the book: $N = p \cdot q$ and $\varphi = (p - 1)(q - 1)$, where p and q are arbitary (and large enough) primes.
+\subsubsection{Public Key}
+In the exercise it is stated that the user has given a public key $e$ which is coprime to $\varphi$. In our code the public key is generated with $\varphi$ by finding a small prime coprime to $\varphi$. So we are looking for the GCD\footnote{Greates Common Divisor} of a prime and $\varphi$ with
+\begin{lstlisting}
+while (b != 0) {
+	if (a > b)
+		a -= b;
+	else
+		b -= a;
+}
+return a;
+\end{lstlisting}
+where $a$ is the prime and $b=\varphi$.
+\subsubsection{Private Key}
+Now we create the private key with the help of the public key $e$ and the totient $\varphi$.
+\begin{lstlisting}
+x0 = 0, x1 = 1;
+while (e > 1) {
+	q = e / phi.phi;
+	t = phi.phi, phi.phi = e % phi.phi, e = t;
+	t = x0, x0 = x1 - q * x0, x1 = t;
+}
+if (x1 < 0)
+	x1 += b0;
+return x1;
+\end{lstlisting}
+\subsubsection{Encryption/Decryption}
+Encryption and decryption follow a simple pattern. Every character of a message is calculated with $m^e\%N$. To prevent overflows from happening for large $e$'s a special algorithm is used to keep modulating before that happens.
+\begin{lstlisting}
+x = 1, y = m;
+while(e > 0) {
+	if(e % 2) {  // (e & 1)
+		x *= y;
+		x %= N;
+	}
+	y = y * y;
+	y %= N;
+	b /= 2;
+}
+return x;
+\end{lstlisting}
+The only difference with decrypting to encryption is that the private instead of the public key is used.
 \section{Constraints}
+\begin{description}
+	\item[Prime Generation] Although SPIM has no problems to generate the array of 1500 entries for the primes, finding a prime near $n$ will fail for $n>100$ for unknown reasons, as of now.
+\end{description}
 \end{document}
