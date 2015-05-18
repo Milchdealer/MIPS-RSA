@@ -14,7 +14,7 @@ import generate_mips
 
 words = ['a', 'ab', 'pom', 'sunu', '..', 'rabel', 'kaltxi', 'klavier', 'bananenbrot', 'superkalifragelistike']
 
-class TestRSA_C(unittest.TestCase):
+class TestRSA_C():#unittest.TestCase):
 
 	def setUp(self):
 		os.chdir('../C')
@@ -82,6 +82,12 @@ class TestRSA_MIPS(unittest.TestCase):
 
 		for val, expected in [ ([20,7],3), ([32,25],9), ([12,7],7), ([504,421],85), ([72,7],31) ]:
 			self.assertEquals( self.call_mips('gen/inverse.s', '%d\n%d\n' % tuple(val)), str(expected) )
+
+	def test_getprime(self):
+		generate_mips.link_file('getprime.s')
+
+		self.assertEquals( self.call_mips('gen/getprime.s', '%d\n' % 20), "1" )
+
 
 if __name__ == '__main__':
 	unittest.main()

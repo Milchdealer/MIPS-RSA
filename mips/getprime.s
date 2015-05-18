@@ -57,7 +57,6 @@ getprime:
 	j innerLoop					## 		}
 	endLoop:					## 	}
 	j findClosest				## 	findClosest();
-#END}}
 error:
 	move $v0, $zero				## return 0;
 	jr $ra						## return;
@@ -83,21 +82,21 @@ returnClosest:
 	la $t4, primes				## t4 = &primes;
 	subu $v0, $t5, $t4			## v0 = &primes[n] - t4;
 	jr $ra						## return v0;
+#END}}
 	
 
 ___start:
 main:
 	
-	li $v0, 5 
-	syscall  		## scanf("%d", &a)
-	move $a0, $v0
+	# li $v0, 5 
+	# syscall  		## scanf("%d", &a)
+	# move $a0, $v0
 
-	jal getprime		## sieve
+	# jal getprime		## sieve
 
-	move $a0, $v0	
-	li $v0, 1		## printf("%d", res)
-	syscall 
+	# move $a0, $v0	
+	# li $v0, 1		## printf("%d", res)
+	# syscall 
 
 	li $v0, 10		# syscall code 10 for terminating the program
 	syscall
-
