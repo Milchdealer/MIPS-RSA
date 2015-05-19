@@ -128,7 +128,7 @@ OBJS = spim.o spim-utils.o run.o mem.o inst.o data.o sym-tbl.o parser_yacc.o lex
 
 
 spim:   $(OBJS)
-	$(CC) -g $(OBJS) $(LDFLAGS) -o spim -lm
+	$(CC) -g $(OBJS) $(LDFLAGS) -o ../../bin/spim -lm
 
 
 #

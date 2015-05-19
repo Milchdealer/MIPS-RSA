@@ -86,7 +86,10 @@ class TestRSA_MIPS(unittest.TestCase):
 	def test_getprime(self):
 		generate_mips.link_file('getprime.s')
 
-		self.assertEquals( self.call_mips('gen/getprime.s', '%d\n' % 20), "1" )
+		for val, expected in [ (2,2),(3,3),(4,3),(5,5),(6,7),(7,7),(10,11),(15,17),(20,19),(40,41),(43,43),
+								(50,53),(61,61),(70,71),(83,83),(89,89),(91,89),(99,101) ]:
+			actual = self.call_mips('gen/getprime.s', '%d\n' % val)
+			self.assertEquals( actual, str(expected), "getprime(%s) returned %s, but expected %s" % (val, actual, expected) )
 
 
 if __name__ == '__main__':
