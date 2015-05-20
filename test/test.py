@@ -91,6 +91,12 @@ class TestRSA_MIPS(unittest.TestCase):
 			actual = self.call_mips('gen/getprime.s', '%d\n' % val)
 			self.assertEquals( actual, str(expected), "getprime(%s) returned %s, but expected %s" % (val, actual, expected) )
 
+	def test_totient(self):
+		generate_mips.link_file('totient.s')
+
+		for val, expected in [ ([2, 2], [4, 1]), ([17, 11], [187, 160]), ([13, 7], [91, 72]), ([23, 47], [1081, 1012]) ]:
+			self.assertEquals( self.call_mips('gen/totient.s', '%d\n%d\n' % tuple(val)), '%d\n%d' % (tuple(expected)) )
+
 
 if __name__ == '__main__':
 	unittest.main()

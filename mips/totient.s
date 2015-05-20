@@ -61,7 +61,11 @@ main:
 
 	move $a0, $v0	
 	li $v0, 1		## printf("%d", modN)
-	syscall 
+	syscall
+
+    addi $a0, $zero, 0xA    ## ASCII Code for newline
+    addi $v0, $zero, 0xB    ## Syscall 11
+    syscall
 	
 	move $a0, $v1	
 	li $v0, 1		## printf("%d", phi)
