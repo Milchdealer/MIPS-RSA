@@ -2,10 +2,24 @@
 \documentclass{report}
 
 \usepackage{listings}
+\usepackage{color}
 
 \title{RSA implementation in MIPS Assembler Language}
 \author{Jannik Franz, Tobias Ruck}
 \begin{document}
+\lstset{language=C,
+	basicstyle=\small\sffamily,
+	numbers=left,
+	numberstyle=\tiny,
+	frame=tb,
+	tabsize=4,
+	columns=fixed,
+	showstringspaces=false,
+	showtabs=false,
+	keepspaces,
+	commentstyle=\color{red},
+	keywordstyle=\color{blue}
+} 
 \maketitle
 \setcounter{chapter}{1}
 \section{Algorithm}
