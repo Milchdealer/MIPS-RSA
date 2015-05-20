@@ -80,9 +80,8 @@ while(e > 0) {
 return x;
 \end{lstlisting}
 The only difference with decrypting to encryption is that the private instead of the public key is used.
-\section{Constraints}
+\section{Constraints (of the implementation)}
 \begin{description}
-	\item[Prime Generation] Although SPIM has no problems to generate the array of 1500 entries for the primes, finding a prime near $n$ will fail for $n>100$ for unknown reasons, as of now.
-	\item[32-Bit] Due to the variables being 32-bit it is constrained by the modulus, as you can't encrypt characters with a byte value bigger than the modulus. This would cause a loss of data.
+	\item[32-Bit] Although we generate prime numbers up to $1500$, we can actually only use primes up to around $120$ as the totient $\varphi$ becomes to big and the implementtation fails due to its 32-bit nature.
 \end{description}
 \end{document}
