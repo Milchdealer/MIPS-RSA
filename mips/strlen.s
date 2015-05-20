@@ -17,6 +17,7 @@ input_string: .space 14100
 # OUTPUT:
 # - $v0 = size_t: Number of characters in the string
 strlen:
+	#PUSH_REGISTERS
 	li $v0, 0 # initialize the count to zero
 	strlen_loop:
 		lb $t1, 0($a0) # load the next character into t1
@@ -25,7 +26,9 @@ strlen:
 		addi $v0, $v0, 1 # increment the count
 		j strlen_loop # return to the top of the loop
 	exit:
-		jr $ra
+
+	#POP_REGISTERS
+	jr $ra
 #END}}
 
 __start:

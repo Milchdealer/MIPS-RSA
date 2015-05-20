@@ -19,6 +19,8 @@ input_number_array: .space 14100
 # OUTPUT:
 # - $v0 = char*: Address of decoded text
 int2text:
+	#PUSH_REGISTERS
+
 	move $t0, $a0 	## arr_address_temp = arr_address
 	move $t1, $a1   ## arr_length_temp = arr_length
 
@@ -41,6 +43,7 @@ int2text:
 
 		bgt $t4, $zero, int2text_loop  ## }
 
+	#POP_REGISTERS
 	jr $ra ## return res (aka. $v0)
 #END}}
 

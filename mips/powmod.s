@@ -18,30 +18,31 @@
 # OUTPUT:
 # - $v0 = unsigned int: 	(a^b)%c
 powmod:
-
-	li $t0, 1		## unsigned int x = 1
-	move $t1, $a0	## unsigned int y = a
+	#PUSH_REGISTERS
+	li $s0, 1		## unsigned int x = 1
+	move $s1, $a0	## unsigned int y = a
 
 	powmod_loop:					## while (
 		ble $a1, $zero, powmod_while_end 	## b > 0 ) {
 		
 		andi $t2, $a1, 1					## t2 = b % 2
 		beq $t2, $zero, powmod_b_mod_2		## if (t2) {
-		mul $t0, $t0, $t1					##     x *= y
-		divu $t0, $a2						## 	   HI = x % mod
-		mfhi $t0							##     x = HI
+		mul $s0, $s0, $s1					##     x *= y
+		divu $s0, $a2						## 	   HI = x % mod
+		mfhi $s0							##     x = HI
 		powmod_b_mod_2:						## }
 
-		mul $t1, $t1, $t1					## y *= y
-		divu $t1, $a2						## HI = y % mod
-		mfhi $t1							## y = HI
+		mul $s1, $s1, $s1					## y *= y
+		divu $s1, $a2						## HI = y % mod
+		mfhi $s1							## y = HI
 
 		srl $a1, $a1, 1						## b /= 2
 
 		j powmod_loop
 		powmod_while_end:			## }
 
-	move $v0, $t0
+	move $v0, $s0
+	#POP_REGISTERS
 	jr $ra 							## return a
 #END}}
 

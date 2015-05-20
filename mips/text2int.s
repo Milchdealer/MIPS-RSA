@@ -19,6 +19,8 @@ input_string: .space 14100
 # OUTPUT:
 # - $v0 = unsigned int*: Address of encoded number array
 text2int:
+	#PUSH_REGISTERS
+
 	move $t0, $a0 	## text_address_temp = text_address
 	move $t1, $a1   ## text_length_temp = text_length
 
@@ -45,6 +47,7 @@ text2int:
 
 		bgt $t4, $zero, text2int_loop  ## }
 
+	#POP_REGISTERS
 	jr $ra ## return c
 #END}}
 

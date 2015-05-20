@@ -17,6 +17,8 @@
 # OUTPUT:
 # - $v0 = unsigned int: 	The greatest common divisor of a and b.
 gcd:
+	#PUSH_REGISTERS
+
 	bne $a0, $zero, gcd_loop		## if (a == 0) 
 	move $v0, $a1					##     return b
 	jr $ra
@@ -30,9 +32,12 @@ gcd:
 		sub $a1, $a1, $a0			##    b -= a
 		j gcd_loop
 
-		gcd_while_end:				## }
+	gcd_while_end:				## }
 
 	move $v0, $a0
+
+	#POP_REGISTERS
+
 	jr $ra 							## return a
 #END}}
 

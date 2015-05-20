@@ -18,6 +18,7 @@
 # OUTPUT:
 # - $v0 = unsigned int: 	d
 inverse:
+	#PUSH_REGISTERS
 	move $s0, $a0				## b0 = phi
 	li $t0, 0					## x0 = 0
 	li $t1, 1					## x1 = 1
@@ -25,6 +26,7 @@ inverse:
 
 	bne $a0, $t1, inverse_phi_1	## if(phi == 1)
 	li $v0, 1					##    return 1
+	#POP_REGISTERS
 	jr $ra
 	inverse_phi_1:
 
@@ -54,6 +56,7 @@ inverse:
 	inverse_end:				## }
 
 	move $v0, $t1
+	#POP_REGISTERS
 	jr $ra
 #END}}
 

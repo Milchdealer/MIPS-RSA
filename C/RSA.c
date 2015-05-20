@@ -5,10 +5,10 @@
 #include <string.h> // memset
 
 // static function headers
-unsigned int modmult(unsigned int a, unsigned int b, unsigned int n);
-unsigned int findClosest(unsigned int n); 
-unsigned int powmod(unsigned int a, unsigned int b, unsigned int mod);
-unsigned int GCD(unsigned int a, unsigned int b);
+unsigned modmult(unsigned a, unsigned b, unsigned n);
+unsigned findClosest(unsigned n); 
+unsigned powmod(unsigned a, unsigned b, unsigned mod);
+unsigned GCD(unsigned a, unsigned b);
 
 // static variables
 static signed char primes[MAX_NUMBERS];
@@ -18,12 +18,12 @@ static signed char primes[MAX_NUMBERS];
  *  @param n number as reference
  *  @return prime number near n
  */
-unsigned int getprime(unsigned int n) {
+unsigned getprime(unsigned n) {
 	if (n > MAX_NUMBERS)
 		return 0; // error
 
 	if (n >= 5) {
-        unsigned int i, j;
+        unsigned i, j;
 		
         memset(primes, 1, sizeof(primes)); // consider all as primes
 		
@@ -53,7 +53,7 @@ unsigned int getprime(unsigned int n) {
  * @param q Second prime number
  * @return Totient contains phi and modN
  */
-Totient totient(unsigned int p, unsigned int q) {
+Totient totient(unsigned p, unsigned q) {
     Totient ret;
 
     ret.phi = (p - 1) * (q - 1);
@@ -78,11 +78,11 @@ Totient totient(unsigned int p, unsigned int q) {
  * @param n modulus
  * @return pointer to the array containing the 
  */
-unsigned int *encrypt(unsigned int const * const M, size_t num, unsigned int e, Totient phi) {
-	unsigned int i;
-	unsigned int *cipher;
+unsigned *crypt(unsigned const * const M, size_t num, unsigned e, Totient phi) {
+	unsigned i;
+	unsigned *cipher;
 
-	cipher = (unsigned *) malloc(sizeof(unsigned int) * num);
+	cipher = (unsigned *) malloc(sizeof(unsigned) * num);
 
 	for (i = 0; i < num; i++)
 		cipher[i] = powmod(M[i], e, phi.modN);
@@ -91,31 +91,12 @@ unsigned int *encrypt(unsigned int const * const M, size_t num, unsigned int e, 
 }
 
 /**
- * Decrypts ciphertext C with length num into message M.
- * @param C ciphertext to decrypt
- * @param num length of C
- * @param d exponent inverse
- * @param n modulus
- */
-unsigned int *decrypt(unsigned int const * const C, size_t num, unsigned int d, Totient phi) {
-	unsigned int i;
-	unsigned int *message;
-
-	message = (unsigned int *) malloc(sizeof(unsigned int) * num);
-
-	for (i = 0; i < num; i++)
-		message[i] = powmod(C[i], d, phi.modN);
-	
-	return message;
-}
-
-/**
  * Gets the public exponent based on the totient.
  * @param phi Totient to base the public exponent on
  * @return public exponent
  */
-unsigned int publicExp(Totient phi) {
-	unsigned int i;
+unsigned publicExp(Totient phi) {
+	unsigned i;
 
 	for (i = 2; i < phi.phi; i++) {
 		if (GCD(i, phi.phi) != 1)
@@ -135,8 +116,8 @@ unsigned int publicExp(Totient phi) {
  * @param phi modulus
  * @return (a^b)%phi
  */
-unsigned int powmod(unsigned int a, unsigned int b, unsigned int mod) {
-	unsigned int x = 1, y = a;
+unsigned powmod(unsigned a, unsigned b, unsigned mod) {
+	unsigned x = 1, y = a;
     while(b > 0) {
         if(b % 2) {  // (b & 1)
             x *= y;
@@ -155,7 +136,7 @@ unsigned int powmod(unsigned int a, unsigned int b, unsigned int mod) {
 * @param b right hand number
 * @return GCD
 */
-unsigned int GCD(unsigned int a, unsigned int b) {
+unsigned GCD(unsigned a, unsigned b) {
     if (a == 0)
         return b;
     while (b != 0) {
@@ -173,7 +154,7 @@ unsigned int GCD(unsigned int a, unsigned int b) {
  * @param e exponent e
  * @return exponent d
  */
-unsigned int inverse(Totient phi, unsigned int e) {
+unsigned inverse(Totient phi, unsigned e) {
     int b0 = phi.phi, t, q;
 	int x0 = 0, x1 = 1;
 
@@ -196,8 +177,8 @@ unsigned int inverse(Totient phi, unsigned int e) {
  * @param n number as reference
  * @return closest number
  */
-unsigned int findClosest(unsigned int n) {
-    unsigned int i[2];
+unsigned findClosest(unsigned n) {
+    unsigned i[2];
 
     i[0] = i[1] = n;
     while (!primes[i[0]] && !primes[i[1]]) {

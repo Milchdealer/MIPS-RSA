@@ -20,8 +20,7 @@ typedef struct {
 } Totient;
 
 // Function Headers
-unsigned int *encrypt(unsigned int const * const, size_t, unsigned int, Totient);
-unsigned int *decrypt(unsigned int const * const, size_t, unsigned int, Totient);
+unsigned int *crypt(unsigned int const * const, size_t, unsigned int, Totient);
 unsigned int getprime(unsigned int n);
 Totient totient(unsigned int p, unsigned int q);
 unsigned int publicExp(Totient phi);
