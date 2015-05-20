@@ -23,20 +23,13 @@ class TestRSA_C(unittest.TestCase):
 	def c_crypt(self, s):
 		proc = subprocess.Popen(['../bin/rsa', s], stdout=subprocess.PIPE)
 		output = proc.stdout.read()
-		#self.assertTrue(output.endswith("Decrypted message: %s" % s), "Wrong decryption: %d \n%s" % (len(s), output))
+		self.assertTrue(output.endswith("Decrypted message: %s" % s), "Wrong decryption: %d \n%s" % (len(s), output))
 
 	def test_decrypt(self):
 		wds = words[:]
 		for l in range(1000, 14000, 2000):
 			wds.append(''.join( chr(random.randint(63, 120)) for i in range(l) ))
 		map(self.c_crypt, wds)
-
-	"""def test_spam(self):
-		for w in words:
-			for i,j in [(20,30),(20,50),(20,70),(20,90),(25,30),(30,50),(30,70),(30,90),(30,37),(30,50),(30,70),(30,90),(50,70),(50,90)]:
-				proc = subprocess.Popen(['../bin/rsa', w, str(i), str(j)], stdout=subprocess.PIPE)
-				output = proc.stdout.read()
-				print(output)"""
 
 class TestRSA_MIPS(unittest.TestCase):
 
@@ -121,6 +114,17 @@ class TestRSA_MIPS(unittest.TestCase):
 		for val, expected in [ ([2, 2], [4, 1]), ([17, 11], [187, 160]), ([13, 7], [91, 72]), ([23, 47], [1081, 1012]) ]:
 			self.assertEquals( self.call_mips('gen/totient.s', '%d\n%d\n' % tuple(val)), '%d\n%d' % (tuple(expected)) )
 
+	def test_rsa(self):
+		generate_mips.link_file('rsa.s')
+
+		for p1,p2 in [ (19, 31), (41, 67), (17, 23) ]:
+			for w in words:
+				actual = self.call_mips( 'gen/rsa.s', '%d\n%d\n%s\n' % (p1,p2,w) )
+
+				proc = subprocess.Popen(['../bin/rsa', w, str(p1), str(p2)], stdout=subprocess.PIPE)
+				output = proc.stdout.read()
+
+				self.assertEquals(actual, output)
 
 if __name__ == '__main__':
 	unittest.main()

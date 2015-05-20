@@ -3,7 +3,6 @@
 # Start with data declarations
 #
 
-#BEGIN{{
 	
 .data
 
@@ -12,6 +11,7 @@
 .text
 .globl __start			# leave this here for the moment
 
+#BEGIN{{
 # Calculates phi and mod N.
 # INPUT:
 # - $a0 = unsigned int p:	first prime number
@@ -20,6 +20,8 @@
 # - $v0 = unsigned int: 	mod N
 # - $v1 = unsigned int: 	phi
 totient:						## function Totient(p, q) {
+	#PUSH_REGISTERS
+
 	move $s0, $a0				## 	s0 = a0 = p;
 	move $s1, $a1				## 	s1 = a1 = q;
 	move $t0, $s0				## 	t0 = p;
@@ -37,11 +39,13 @@ totient:						## function Totient(p, q) {
 	bne $t2, $zero, overflow	##	if (t2 != 0)	goto overflow;
 	mflo $v0					## 	v0 = modN = lo;
 	
+	#POP_REGISTERS
 	jr $ra						## 	return; }
 	
 overflow:
 	move $v0, $zero				## v0 = 0;
 	move $v1, $zero				## v1 = 0;
+	#POP_REGISTERS
 	jr $ra						## return;
 	
 #END}}
